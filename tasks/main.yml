@@ -1,0 +1,14 @@
+---
+- name: install puppet
+  package:
+    name: puppet
+- name: install rsync
+  package:
+    name: rsync
+- name: sync puppet
+  synchronize:
+    src: puppet/
+    dest: /tmp/ansible-puppet/
+  become: false
+- name: run puppet
+  command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
