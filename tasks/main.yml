@@ -1,4 +1,8 @@
 ---
+- name: clean proxmox
+  file:
+    name: /etc/apt/sources.list.d/pve-enterprise.list
+    state: absent
 - name: install puppet
   package:
     name: puppet
