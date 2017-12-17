@@ -9,10 +9,20 @@
 - name: install rsync
   package:
     name: rsync
+- name: add ssh key temporarily as sync does not know the password
+  authorized_key:
+    user: root
+    state: present
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 - name: sync puppet
   synchronize:
     src: puppet/
     dest: /tmp/ansible-puppet/
   become: false
+- name: remove ssh key
+  authorized_key:
+    user: root
+    state: absent
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
 - name: run puppet
   command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
