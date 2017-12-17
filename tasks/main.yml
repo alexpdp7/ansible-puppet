@@ -24,5 +24,9 @@
     user: root
     state: absent
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+- name: run puppet forcing future parser
+  command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/ --parser future
+  when: ansible_distribution == "CentOS"
 - name: run puppet
   command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
+  when: ansible_distribution != "CentOS"
