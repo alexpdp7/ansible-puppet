@@ -8,6 +8,9 @@
   args:
     creates: /etc/yum.repos.d/epel.repo
   when: ansible_distribution == "CentOS"
+- name: apt update
+  command: apt update
+  when: ansible_distribution != "CentOS"
 - name: install puppet
   package:
     name: puppet
