@@ -22,16 +22,25 @@
     user: root
     state: present
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-- name: sync puppet
+  when: ansible_user == 'root'
+- name: sync puppet when root
   synchronize:
     src: puppet/
     dest: /tmp/ansible-puppet/
   become: false
+  when: ansible_user == 'root'
+- name: sync puppet when not root
+  synchronize:
+    src: puppet/
+    dest: /tmp/ansible-puppet/
+    rsync_path: /usr/bin/rsync
+  when: ansible_user != 'root'
 - name: remove ssh key
   authorized_key:
     user: root
     state: absent
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  when: ansible_user == 'root'
 - name: run puppet forcing future parser
   command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/ --parser future
   when: ansible_distribution == "CentOS"
