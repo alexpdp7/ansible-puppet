@@ -7,12 +7,21 @@
   yum:
     name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
   when: ansible_distribution == "CentOS"
+- name: install puppet repo
+  yum:
+    name: https://yum.puppet.com/puppet5/puppet5-release-el-7.noarch.rpm
+  when: ansible_distribution == "CentOS"
 - name: apt update
   command: apt update
   when: ansible_distribution != "CentOS"
 - name: install puppet
   package:
     name: puppet
+  when: ansible_distribution != "CentOS"
+- name: install puppet on CentOS
+  package:
+    name: puppet-agent
+  when: ansible_distribution == "CentOS"
 - name: install rsync
   package:
     name: rsync
@@ -40,9 +49,11 @@
     state: absent
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user == 'root'
-- name: run puppet forcing future parser
-  command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/ --parser future
-  when: ansible_distribution == "CentOS"
 - name: run puppet
   command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
+  environment: "{{ puppetenv }}"
   when: ansible_distribution != "CentOS"
+- name: run puppet on CentOS
+  command: /opt/puppetlabs/bin/puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
+  environment: "{{ puppetenv }}"
+  when: ansible_distribution == "CentOS"
