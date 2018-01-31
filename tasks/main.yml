@@ -35,6 +35,7 @@
   synchronize:
     src: puppet/
     dest: /tmp/ansible-puppet/
+    delete: yes
   become: false
   when: ansible_user == 'root'
 - name: sync puppet when not root
@@ -42,6 +43,7 @@
     src: puppet/
     dest: /tmp/ansible-puppet/
     rsync_path: /usr/bin/rsync
+    delete: yes
   when: ansible_user != 'root'
 - name: remove ssh key
   authorized_key:
