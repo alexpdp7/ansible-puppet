@@ -54,3 +54,8 @@
 - name: run puppet
   command: "{% if ansible_distribution == 'CentOS' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ puppetenv }}"
+  register: puppet_out
+- name: view puppet stdout
+  debug: var=puppet_out.stdout_lines
+- name: view puppet stderr
+  debug: var=puppet_out.stderr_lines
