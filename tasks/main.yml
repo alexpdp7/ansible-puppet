@@ -12,12 +12,11 @@
 - name: apt update
   command: apt update
   when: ansible_distribution != "CentOS"
-- name: install puppet
+- name: install puppet and rsync
   package:
-    name: "{% if ansible_distribution == 'CentOS' %}puppet-agent{% else %}puppet{% endif %}"
-- name: install rsync
-  package:
-    name: rsync
+    name:
+    - "{% if ansible_distribution == 'CentOS' %}puppet-agent{% else %}puppet{% endif %}"
+    - rsync
 - name: add ssh key temporarily as sync does not know the password
   authorized_key:
     user: root
