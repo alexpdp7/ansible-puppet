@@ -9,13 +9,17 @@
     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
     - https://yum.puppet.com/puppet5/puppet5-release-el-7.noarch.rpm
   when: ansible_distribution == "CentOS"
+- name: install puppet 5 repo on ubuntu
+  apt:
+    deb: https://apt.puppetlabs.com/puppet5-release-xenial.deb
+  when: ansible_distribution == "Ubuntu"
 - name: apt update
   command: apt update
   when: ansible_distribution != "CentOS"
 - name: install puppet and rsync
   package:
     name:
-    - "{% if ansible_distribution == 'CentOS' %}puppet-agent{% else %}puppet{% endif %}"
+    - "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}puppet-agent{% else %}puppet{% endif %}"
     - rsync
 - name: add ssh key temporarily as sync does not know the password
   authorized_key:
@@ -44,7 +48,7 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user == 'root'
 - name: run puppet
-  command: "{% if ansible_distribution == 'CentOS' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ puppetenv }}"
   register: puppet_out
 - name: view puppet stdout
