@@ -14,12 +14,7 @@
   when: ansible_distribution != "CentOS"
 - name: install puppet
   package:
-    name: puppet
-  when: ansible_distribution != "CentOS"
-- name: install puppet on CentOS
-  package:
-    name: puppet-agent
-  when: ansible_distribution == "CentOS"
+    name: "{% if ansible_distribution == 'CentOS' %}puppet-agent{% else %}puppet{% endif %}"
 - name: install rsync
   package:
     name: rsync
