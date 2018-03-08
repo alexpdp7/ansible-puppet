@@ -52,10 +52,5 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user == 'root'
 - name: run puppet
-  command: puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
+  command: "{% if ansible_distribution == 'CentOS' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ puppetenv }}"
-  when: ansible_distribution != "CentOS"
-- name: run puppet on CentOS
-  command: /opt/puppetlabs/bin/puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/
-  environment: "{{ puppetenv }}"
-  when: ansible_distribution == "CentOS"
