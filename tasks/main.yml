@@ -3,13 +3,11 @@
   file:
     name: /etc/apt/sources.list.d/pve-enterprise.list
     state: absent
-- name: install epel
+- name: install yum repos (epel and puppet5)
   yum:
-    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-  when: ansible_distribution == "CentOS"
-- name: install puppet repo
-  yum:
-    name: https://yum.puppet.com/puppet5/puppet5-release-el-7.noarch.rpm
+    name:
+    - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    - https://yum.puppet.com/puppet5/puppet5-release-el-7.noarch.rpm
   when: ansible_distribution == "CentOS"
 - name: apt update
   command: apt update
