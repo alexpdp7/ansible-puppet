@@ -1,0 +1,6 @@
+galaxy_info:
+  role_name: ansible-puppet
+  author: Alex
+  description: Run Puppet with Ansible
+  galaxy_tags:
+    - puppet
