@@ -18,10 +18,13 @@ I use the following directory structure:
           roles:
             - ansible-puppet
 * `puppet`
-  * `site.pp`
+  * `site`
+     * `00-common.pp`
+     * `node1.pp`
+     * ...
   * `modules`
 
-Running `ansible-playbook ansible-puppet.yml` will apply `site.pp` on all Ansible hosts.
+Running `ansible-playbook ansible-puppet.yml` will apply `site` on all Ansible hosts.
 
 If you have `host_vars/vars.yml`:
 

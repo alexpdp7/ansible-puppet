@@ -48,7 +48,7 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user == 'root'
 - name: run puppet
-  command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site.pp --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ puppetenv }}"
   register: puppet_out
 - name: view puppet stdout
