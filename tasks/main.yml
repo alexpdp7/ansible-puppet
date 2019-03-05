@@ -11,7 +11,7 @@
   when: ansible_distribution == "CentOS"
 - name: install puppet 5 repo on ubuntu
   apt:
-    deb: https://apt.puppetlabs.com/puppet5-release-xenial.deb
+    deb: https://apt.puppetlabs.com/puppet-release-xenial.deb
   when: ansible_distribution == "Ubuntu"
 - name: apt update
   command: apt update
