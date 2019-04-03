@@ -21,6 +21,10 @@
     name:
     - "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}puppet-agent{% else %}puppet{% endif %}"
     - rsync
+- name: disable puppet service
+  service:
+    name: puppet
+    enabled: no
 - name: add ssh key temporarily as sync does not know the password
   authorized_key:
     user: root
