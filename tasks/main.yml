@@ -53,7 +53,7 @@
   when: ansible_user == 'root'
 - name: run puppet
   command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
-  environment: "{{ puppetenv }}"
+  environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout
   debug: var=puppet_out.stdout_lines
@@ -61,7 +61,7 @@
   debug: var=puppet_out.stderr_lines
 - name: run puppet twice as some facts are not properly detected the first time
   command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
-  environment: "{{ puppetenv }}"
+  environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout twice
   debug: var=puppet_out.stdout_lines

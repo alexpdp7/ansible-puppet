@@ -29,10 +29,12 @@ Running `ansible-playbook ansible-puppet.yml` will apply `site` on all Ansible h
 If you have `host_vars/vars.yml`:
 
     ---
-    puppet_env:
+    puppetenv_host:
       FACTER_SECRET_VAR: "{{ vault_FACTER_SECRET_VAR }}"
       FACTER_PUBLIC_VAR: public_var
 
 and the corresponding vault variable defined, you can simply do `$public_var` and `$secret_var` in your manifests and it will work.
+
+You can also use `puppetenv`. Playbook will merge `puppetenv` and `puppetenv_host`. Note that by default, vars are overwritten, not merged.
 
 NOTE: this works by pushing environment variables and having Puppet access them via facter, which is not safe.
