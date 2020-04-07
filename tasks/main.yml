@@ -3,6 +3,13 @@
   file:
     name: /etc/apt/sources.list.d/pve-enterprise.list
     state: absent
+- name: install dnf plugins core to enable powertools
+  package:
+    name: dnf-plugins-core
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
+- name: enable powertools (required for EPEL 8)
+  command: dnf config-manager --set-enabled PowerTools
+  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
 - name: install yum repos (epel and puppet5)
   yum:
     name:
