@@ -16,18 +16,18 @@
     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version}}.noarch.rpm
     - https://yum.puppet.com/puppet5/puppet5-release-el-{{ ansible_distribution_major_version}}.noarch.rpm
   when: ansible_distribution == "CentOS"
-- name: install puppet repo on ubuntu
+- name: install puppet repo on ubuntu 16.04
   apt:
     deb: https://apt.puppetlabs.com/puppet7-release-xenial.deb
     state: present
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution_release == 'xenial'
 - name: apt update
   command: apt update
   when: ansible_distribution != "CentOS"
 - name: install puppet and rsync
   package:
     name:
-    - "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}puppet-agent{% else %}puppet{% endif %}"
+    - "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}puppet-agent{% else %}puppet{% endif %}"
     - rsync
 - name: disable puppet service
   service:
@@ -60,7 +60,7 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user == 'root'
 - name: run puppet
-  command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout
@@ -68,7 +68,7 @@
 - name: view puppet stderr
   debug: var=puppet_out.stderr_lines
 - name: run puppet twice as some facts are not properly detected the first time
-  command: "{% if ansible_distribution in ('CentOS', 'Ubuntu') %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout twice
