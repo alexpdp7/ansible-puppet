@@ -16,9 +16,10 @@
     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version}}.noarch.rpm
     - https://yum.puppet.com/puppet5/puppet5-release-el-{{ ansible_distribution_major_version}}.noarch.rpm
   when: ansible_distribution == "CentOS"
-- name: install puppet 5 repo on ubuntu
+- name: install puppet repo on ubuntu
   apt:
-    deb: https://apt.puppetlabs.com/puppet-release-xenial.deb
+    deb: https://apt.puppetlabs.com/puppet7-release-xenial.deb
+    state: present
   when: ansible_distribution == "Ubuntu"
 - name: apt update
   command: apt update
