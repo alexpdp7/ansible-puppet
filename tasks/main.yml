@@ -52,7 +52,7 @@
     dest: /tmp/ansible-puppet/
     rsync_path: /usr/bin/rsync
     delete: yes
-  when: ansible_user | default('notroot') == 'root'
+  when: ansible_user | default('notroot') != 'root'
 - name: remove ssh key
   authorized_key:
     user: root
