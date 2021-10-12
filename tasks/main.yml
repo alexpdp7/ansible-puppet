@@ -6,16 +6,30 @@
 - name: install dnf plugins core to enable powertools
   package:
     name: dnf-plugins-core
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "Rocky") and ansible_distribution_major_version == "8"
 - name: enable powertools (required for EPEL 8)
   command: dnf config-manager --set-enabled powertools
-  when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "8"
-- name: install yum repos (epel and puppet5)
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "Rocky") and ansible_distribution_major_version == "8"
+- name: Import Puppet key
+  rpm_key:
+    state: present
+    key: https://yum.puppet.com/RPM-GPG-KEY-puppet
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "Rocky") and ansible_distribution_major_version == "7"
+- name: Import EPEL key
+  rpm_key:
+    state: present
+    key: https://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-8
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
+- name: install epel
   yum:
     name:
     - https://dl.fedoraproject.org/pub/epel/epel-release-latest-{{ ansible_distribution_major_version}}.noarch.rpm
+  when: ansible_distribution == "CentOS" or ansible_distribution == "Rocky"
+- name: install puppet repo
+  yum:
+    name:
     - https://yum.puppet.com/puppet5/puppet5-release-el-{{ ansible_distribution_major_version}}.noarch.rpm
-  when: ansible_distribution == "CentOS"
+  when: (ansible_distribution == "CentOS" or ansible_distribution == "Rocky") and ansible_distribution_major_version == "7"
 - name: install puppet repo on ubuntu 16.04
   apt:
     deb: https://apt.puppetlabs.com/puppet7-release-xenial.deb
@@ -23,11 +37,11 @@
   when: ansible_distribution_release == 'xenial'
 - name: apt update
   command: apt update
-  when: ansible_distribution != "CentOS"
+  when: ansible_distribution != "CentOS" and ansible_distribution != "Rocky"
 - name: install puppet and rsync
   package:
     name:
-    - "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}puppet-agent{% else %}puppet{% endif %}"
+    - "{% if ((ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky') and ansible_distribution_major_version == '7') or ansible_distribution_release == 'xenial' %}puppet-agent{% else %}puppet{% endif %}"
     - rsync
 - name: disable puppet service
   service:
@@ -60,7 +74,7 @@
     key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
   when: ansible_user | default('notroot') == 'root'
 - name: run puppet
-  command: "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ((ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky') and ansible_distribution_major_version == '7') or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout
@@ -68,7 +82,7 @@
 - name: view puppet stderr
   debug: var=puppet_out.stderr_lines
 - name: run puppet twice as some facts are not properly detected the first time
-  command: "{% if ansible_distribution == 'CentOS' or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
+  command: "{% if ((ansible_distribution == 'CentOS' or ansible_distribution == 'Rocky') and ansible_distribution_major_version == '7') or ansible_distribution_release == 'xenial' %}/opt/puppetlabs/bin/{% endif %}puppet apply /tmp/ansible-puppet/site/ --modulepath=/tmp/ansible-puppet/modules/"
   environment: "{{ lookup('vars', 'puppetenv', default={}) | combine(lookup('vars', 'puppetenv_host', default={})) }}"
   register: puppet_out
 - name: view puppet stdout twice
