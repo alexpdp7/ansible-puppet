@@ -1,3 +1,5 @@
+DEPRECATED, see: https://github.com/alexpdp7/alexpdp7/tree/master/personal_infra#ansiblepuppet-integration
+
 # ansible-puppet
 
 A simple role to run Puppet via Ansible, with a hacky (and unsafe) way to use secrets from vaults (or regular vars) in your Puppet manifests
